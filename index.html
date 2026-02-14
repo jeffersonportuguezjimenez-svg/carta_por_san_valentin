@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para ti · Carta de San Valentín</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #fbe9f0 0%, #f8dbe7 100%);
+            font-family: 'Segoe UI', 'Brush Script MT', cursive, system-ui, -apple-system, sans-serif;
+            padding: 1rem;
+        }
+
+        /* contenedor principal */
+        .valentine-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 650px;
+        }
+
+        /* sobre completo */
+        .envelope {
+            background: transparent;
+            width: 100%;
+            max-width: 550px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            position: relative;
+            box-shadow: 0 20px 25px -10px rgba(180, 80, 120, 0.3);
+        }
+
+        .envelope:active {
+            transform: scale(0.98);
+        }
+
+        /* solapa triangular superior (parte trasera) */
+        .flap {
+            width: 0;
+            height: 0;
+            border-left: 270px solid transparent;
+            border-right: 280px solid transparent;
+            border-bottom: 140px solid #fbc4d0;  /* rosa suave */
+            margin-bottom: -6px; /* une con el cuerpo */
+            filter: drop-shadow(0 -3px 3px rgba(200, 120, 140, 0.2));
+            transition: all 0.45s cubic-bezier(0.4, 0.0, 0.2, 1);
+            transform-origin: top center;
+        }
+
+        /* cuerpo del sobre (rectángulo) */
+        .body {
+            width: 545px;
+            height: 260px;
+            background: #fec9d5;  /* rosa pastel ligeramente más claro */
+            margin: 0 auto;
+            border-radius: 0 0 18px 18px;
+            box-shadow: 0 8px 12px rgba(160, 100, 120, 0.2);
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-radius 0.2s;
+        }
+
+        /* triangulo inferior (solapa del fondo) - opcional solo estética */
+        .bottom-flap {
+            width: 0;
+            height: 0;
+            border-left: 260px solid transparent;
+            border-right: 260px solid transparent;
+            border-top: 30px solid #f9aebb; /* un poco más intenso para detalle */
+            margin-top: -10px;
+            opacity: 0.7;
+            filter: drop-shadow(0 4px 2px rgba(0,0,0,0.05));
+        }
+
+        /* carta interior (inicialmente oculta dentro del sobre) */
+        .letter {
+            background: #fffcf7;
+            width: 470px;
+            min-height: 290px;
+            border-radius: 24px 24px 18px 18px;
+            padding: 2rem 1.8rem 1.8rem 1.8rem;
+            box-shadow: 0 8px 20px rgba(190, 100, 130, 0.25);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            z-index: 5;
+            transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+            opacity: 0;
+            pointer-events: none;  /* no interfiere con clics del sobre */
+            border: 2px solid #ffe2ec;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* cuando el sobre está "abierto" (clase open) */
+        .envelope.open .flap {
+            transform: rotateX(180deg);
+            border-bottom-color: #ffb6c9;  /* rosa suave al girar */
+            filter: drop-shadow(0 6px 4px rgba(220, 120, 140, 0.3));
+        }
+
+        .envelope.open .letter {
+            opacity: 1;
+            transform: translate(-50%, -58%) scale(1); /* sube un poco la carta */
+            pointer-events: none; /* sigue sin atrapar clics, el sobre se cierra al hacer clic fuera? pero mantenemos clic en envelope */
+        }
+
+        /* texto dentro de la carta */
+        .message {
+            text-align: center;
+            color: #b34167; /* rojo claro/rosado oscuro */
+        }
+
+        .message h1 {
+            font-family: 'Brush Script MT', cursive, 'Segoe UI';
+            font-size: 3rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            color: #d44c72;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 0 #ffe2ec;
+        }
+
+        .message p {
+            font-size: 1.7rem;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            margin: 1.2rem 0 0.6rem;
+            line-height: 1.6;
+            color: #a53f5e;
+        }
+
+        .frase {
+            font-size: 1.3rem;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            color: #c3667c;
+            margin-bottom: 1.6rem;
+            font-style: italic;
+            border-top: 2px dashed #fbb6c6;
+            border-bottom: 2px dashed #fbb6c6;
+            padding: 0.7rem 0;
+        }
+
+        .corazon {
+            font-size: 4rem;
+            line-height: 1.2;
+            color: #e6396a; /* rojo claro con fuerza */
+            display: inline-block;
+            filter: drop-shadow(0 4px 4px #fbaac3);
+            animation: latido 1.2s infinite ease-in-out;
+        }
+
+        @keyframes latido {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            35% { transform: scale(1.15); }
+            50% { transform: scale(1.1); }
+            65% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* decoración de mini corazones en el sobre */
+        .body::before {
+            content: "❤️";
+            position: absolute;
+            font-size: 1.6rem;
+            left: 20px;
+            bottom: 15px;
+            opacity: 0.4;
+            color: #e67192;
+            transform: rotate(-5deg);
+        }
+
+        .body::after {
+            content: "❤️";
+            position: absolute;
+            font-size: 2.2rem;
+            right: 20px;
+            top: 15px;
+            opacity: 0.3;
+            color: #e05982;
+            transform: rotate(10deg);
+        }
+
+        /* texto dentro del sobre cerrado (para invitar) */
+        .body p {
+            background: rgba(255, 240, 245, 0.75);
+            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            color: #a13e5c;
+            font-size: 1.5rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            backdrop-filter: blur(2px);
+            box-shadow: 0 2px 8px #ffb8cf;
+            border: 2px solid #ffffffb3;
+        }
+
+        /* adaptación móvil */
+        @media (max-width: 600px) {
+            .flap {
+                border-left: 190px solid transparent;
+                border-right: 190px solid transparent;
+                border-bottom: 100px solid #fbc4d0;
+            }
+            .body {
+                width: 380px;
+                height: 200px;
+            }
+            .letter {
+                width: 340px;
+                min-height: 230px;
+                padding: 1rem 1.2rem;
+            }
+            .bottom-flap {
+                border-left: 190px solid transparent;
+                border-right: 190px solid transparent;
+            }
+            .message h1 {
+                font-size: 2.2rem;
+            }
+            .message p {
+                font-size: 1.2rem;
+            }
+            .frase {
+                font-size: 1rem;
+            }
+            .corazon {
+                font-size: 3rem;
+            }
+            .body p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="valentine-wrapper">
+        <!-- toda la carta-sobre es cliqueable -->
+        <div class="envelope" id="envelope" onclick="toggleEnvelope()">
+            <!-- solapa frontal (triángulo superior) -->
+            <div class="flap"></div>
+            <!-- cuerpo principal del sobre -->
+            <div class="body">
+                <p>💌 Ábreme 💌</p>
+            </div>
+            <!-- pequeña solapa inferior (decorativa) -->
+            <div class="bottom-flap"></div>
+
+            <!-- carta interior con el texto romántico -->
+            <div class="letter" id="letter">
+                <div class="message">
+                    <h1>Feliz día de San Valentín</h1>
+                    <p>💕</p>
+                    <div class="frase">
+                        "Gracias por siempre estar<br> en mis días."
+                    </div>
+                    <div class="corazon">
+                        ❤️
+                    </div>
+                    <!-- pequeño detalle sutil -->
+                    <p style="font-size: 0.95rem; margin-top: 1rem; color: #dc8aa3;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleEnvelope() {
+            const envelope = document.getElementById('envelope');
+            envelope.classList.toggle('open');
+
+            // Si deseas que se cierre al hacer clic de nuevo, con toggle basta.
+            // Pero para una experiencia más amigable, también podriece cerrar si se vuelve a hacer clic.
+            // La carta aparece y desaparece suavemente con la transición CSS.
+        }
+
+        // Pequeño detalle: permitir cerrar también si se hace clic fuera? 
+        // Pero mejor así, solo el sobre alterna.
+        // Opcional: hacer clic en la carta no hace nada (por el pointer-events: none)
+        // Si se quiere cerrar al hacer clic en cualquier parte, se puede modificar, pero el diseño esperado es clic para abrir/cerrar.
+    </script>
+
+    <!-- pequeña explicación: al hacer clic en cualquier área del sobre (incluye solapa) se abre o cierra. -->
+    <!-- Los colores pastel, rosados y rojos claros dominan, con texto emotivo. -->
+</body>
+</html>
